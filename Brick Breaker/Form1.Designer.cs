@@ -65,6 +65,7 @@
             // 
             this.txtScore.AutoSize = true;
             this.txtScore.Font = new System.Drawing.Font("News706 BT", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtScore.ForeColor = System.Drawing.Color.White;
             this.txtScore.Location = new System.Drawing.Point(15, 9);
             this.txtScore.Name = "txtScore";
             this.txtScore.Size = new System.Drawing.Size(83, 22);

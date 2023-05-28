@@ -17,6 +17,7 @@ namespace Brick_Breaker
         bool goLeft;
         bool goRight;
         bool gameIsOver;
+        bool bonusIsActive;
 
         int score;
         int ballx;
@@ -24,6 +25,7 @@ namespace Brick_Breaker
         int playerSpeed;
 
         Random random = new Random();
+        PictureBox bonus = new PictureBox();
 
 
         public BrickBreaker()
@@ -35,6 +37,7 @@ namespace Brick_Breaker
         private void setUpGame()
         {
             gameIsOver = false;
+            bonusIsActive = false;
             score = 0;
             ballx = 5;
             bally = 7;
@@ -62,6 +65,7 @@ namespace Brick_Breaker
         private void gameOver(string message)
         {
             gameIsOver = true;
+            bonusIsActive = false;
             gameTimer.Stop();
 
             txtScore.Text = "Score: " + score + " " + message;
@@ -69,7 +73,7 @@ namespace Brick_Breaker
 
         private void placeBlocks()
         {
-            blocksArray = new PictureBox[40];
+            blocksArray = new PictureBox[112];
 
             int a = 0;
 
@@ -80,24 +84,24 @@ namespace Brick_Breaker
             {
                 blocksArray[i] = new PictureBox();
                 blocksArray[i].Height = 20;
-                blocksArray[i].Width = 100;
+                blocksArray[i].Width = 50;
                 blocksArray[i].Tag = "blocks";
                 blocksArray[i].BackColor = Color.Black;
 
-                if(a == 8)
+                if (a == 16)
                 {
-                    top += 25;
+                    top += 23;
                     left = 18;
                     a = 0;
                 }
 
-                if (a < 8)
+                if (a < 16)
                 {
                     a++;
                     blocksArray[i].Left = left;
                     blocksArray[i].Top = top;
                     this.Controls.Add(blocksArray[i]);
-                    left += 105;
+                    left += 53;
 
 
                 }
@@ -125,10 +129,15 @@ namespace Brick_Breaker
                 player.Left -= playerSpeed;
             }
 
-            if(goRight == true && player.Left < 760)
+            if(goRight == true && player.Left < 760 && bonusIsActive == false)
             {
                 player.Left += playerSpeed;
             }
+            else if(goRight == true && player.Left < 660)
+            {
+                player.Left += playerSpeed;
+            }
+
 
             ball.Left += ballx;
             ball.Top += bally;
@@ -156,6 +165,9 @@ namespace Brick_Breaker
                 }
             }
 
+            bonus.Top += 7;
+
+
             foreach (Control x in this.Controls)
             {
                 if (x is PictureBox && (string)x.Tag == "blocks")
@@ -165,12 +177,39 @@ namespace Brick_Breaker
                         score += 1;
                         bally = -bally;
 
+                        if (score > 0 && score % 2 == 0 && bonusIsActive == false)
+                        {
+
+                            bonus.Tag = "bonus"; 
+                            bonus.Width = 10;
+                            bonus.Height = 10;
+                            bonus.BackColor = Color.White;
+                            bonus.Location = x.Location;
+                            bonus.Left += 20;
+                            this.Controls.Add(bonus);
+
+                        }
                         this.Controls.Remove(x);
+                    }
+
+                    if (bonus.Bounds.IntersectsWith(player.Bounds))
+                    {
+                        player.Width = 200;
+                        bonusIsActive = true;
+                    }
+
+
+                    if (bonus.Top > 1200)
+                    {
+                        bonusIsActive = false;
+                        player.Width = 100;
+                        this.Controls.Remove(bonus);
+
                     }
                 }
             }
 
-            if (score == 40 )
+            if (score == 80 )
             {
                 gameOver("You Win!! Press Enter To Play Again");
                 gameTimer.Stop();
@@ -215,5 +254,7 @@ namespace Brick_Breaker
                 placeBlocks();
             }
         }
+
+
     }
 }
